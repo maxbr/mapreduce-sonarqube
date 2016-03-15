@@ -7,7 +7,7 @@ Input is read from directory */tmp/wordcount/in*, and output is written to */tmp
 
 Steps
 ---
-1. git clone https://bitbucket.org/maxbr/mapreduce-sonarqube.git
+1. git clone https://github.com/maxbr/mapreduce-sonarqube.git
 2. cd mapreduce-sonarqube
 3. vagrant up
 4. vagrant ssh 
