@@ -18,7 +18,7 @@ mysql -u root -e "FLUSH PRIVILEGES"
 # install java and maven
 sudo yum install -y java-1.7.0-openjdk-devel
 echo "Downloading maven"
-curl --silent -LO http://mirror.cc.columbia.edu/pub/software/apache/maven/maven-3/3.0.5/binaries/apache-maven-3.0.5-bin.tar.gz
+curl -s -LO http://mirror.cc.columbia.edu/pub/software/apache/maven/maven-3/3.0.5/binaries/apache-maven-3.0.5-bin.tar.gz
 sudo tar xzf apache-maven-3.0.5-bin.tar.gz -C /usr/local
 sudo ln -s /usr/local/apache-maven-3.0.5 /usr/local/maven
 
@@ -30,7 +30,7 @@ rm apache-maven-3.0.5-bin.tar.gz
 
 # configuring sonarqube
 echo "Downloading sonarqube"
-curl --silent -L -O --retry 5 https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-5.4.zip
+curl -s -LO --retry 5 https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-5.4.zip
 sudo unzip sonarqube-5.4.zip -d /opt
 sudo ln -s /opt/sonarqube-5.4 /usr/local/sonar
 rm sonarqube-5.4.zip
@@ -43,9 +43,15 @@ sudo sed -i 's/^#sonar.web.context=/sonar.web.context=/' /usr/local/sonar/conf/s
 sudo sed -i 's/^#sonar.web.port=9000/sonar.web.port=9000/' /usr/local/sonar/conf/sonar.properties
 
 echo "Downloading sonarqube plugins"
-sudo curl --silent --retry 5 -L -o /usr/local/sonar/extensions/plugins/sonar-pmd-plugin-2.5.jar https://sonarsource.bintray.com/Distribution/sonar-pmd-plugin/sonar-pmd-plugin-2.5.jar
-sudo curl --silent --retry 5 -L -o /usr/local/sonar/extensions/plugins/sonar-findbugs-plugin-3.3.jar https://sonarsource.bintray.com/Distribution/sonar-findbugs-plugin/sonar-findbugs-plugin-3.3.jar
-sudo curl --silent --retry 5 -L -o /usr/local/sonar/extensions/plugins/sonar-checkstyle-plugin-2.4.jar http://sonarsource.bintray.com/Distribution/sonar-checkstyle-plugin/sonar-checkstyle-plugin-2.4.jar
+pushd /usr/local/sonar/extensions/plugins/
+rm -f sonar-java-plugin*jar
+sudo curl -s --retry 5 -L -o sonar-java-plugin-3.11.jar https://sonarsource.bintray.com/Distribution/sonar-java-plugin/sonar-java-plugin-3.11.jar
+rm -f sonar-scm-git-plugin*jar
+sudo curl -s --retry 5 -L -o sonar-scm-git-plugin-1.1.jar http://downloads.sonarsource.com/plugins/org/codehaus/sonar-plugins/sonar-scm-git-plugin/1.1/sonar-scm-git-plugin-1.1.jar
+sudo curl -s --retry 5 -L -o sonar-pmd-plugin-2.5.jar https://sonarsource.bintray.com/Distribution/sonar-pmd-plugin/sonar-pmd-plugin-2.5.jar
+sudo curl -s --retry 5 -L -o sonar-findbugs-plugin-3.3.jar https://sonarsource.bintray.com/Distribution/sonar-findbugs-plugin/sonar-findbugs-plugin-3.3.jar
+sudo curl -s --retry 5 -L -o sonar-checkstyle-plugin-2.4.jar http://sonarsource.bintray.com/Distribution/sonar-checkstyle-plugin/sonar-checkstyle-plugin-2.4.jar
+popd
 
 # load mysqldump
 if [[ -f "${HOME}/Hadoop-Word-Count/dump.sql" ]]; then
@@ -74,6 +80,11 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "centos-6.5"
   config.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.3/centos65-x86_64-20140116.box"
+
+  config.vm.provider "virtualbox" do |v| 
+    v.memory = 1536
+    v.cpus = 2
+  end
 
   config.vm.network "forwarded_port", guest: 9000, host: 9000
 
