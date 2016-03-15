@@ -1,0 +1,5 @@
+target/
+.idea
+*.iml
+.sonar_lock
+.vagrant

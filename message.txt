@@ -1,0 +1,12 @@
+###############################################################################
+                    MapReduce SonarQube Sample
+###############################################################################
+1. cd Hadoop-Word-Count
+2. mkdir -p /tmp/wordcount/in
+3. cp ./README.md /tmp/wordcount/in/
+4. mvn clean package
+5. java -javaagent:${HOME}/.m2/repository/org/jacoco/org.jacoco.agent/0.7.5.201505241946/org.jacoco.agent-0.7.5.201505241946-runtime.jar=destfile=${PWD}/target/jacoco-it.exec -cp `hadoop classpath`:target/wordcount-0.0.1-SNAPSHOT.jar com.igalia.wordcount.App
+6. mvn sonar:sonar -Dsonar.username=admin -Dsonar.password=admin -Dsonar.host.url=http://127.0.0.1:9000/ -Dsonar.projectName="Hadoop WordCount" -Dsonar.projectKey=wordcount:sonar:key
+7. rm -rf /tmp/wordcount/out
+###############################################################################
+
